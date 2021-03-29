@@ -1,24 +1,22 @@
-// responsavel por construir nosso layout sob demanda
-
 import blessed from "blessed";
 
-export default class ComponentBuilder {
+export default class ComponentsBuilder {
   #screen;
   #layout;
   #input;
   #chat;
+  #status;
+  #activityLog;
 
   constructor() {}
 
-  // propriedades comum que todos compoentes tem
   #baseComponent() {
-    // component privado '#'
     return {
       border: "line",
       mouse: true,
       keys: true,
       top: 0,
-      scrollbar: {
+      scrollboar: {
         ch: " ",
         inverse: true,
       },
@@ -29,21 +27,18 @@ export default class ComponentBuilder {
 
   setScreen({ title }) {
     this.#screen = blessed.screen({
-      // faz alguns redimensionamentos automaticos na tela
       smartCSR: true,
       title,
     });
 
-    // para o programa
     this.#screen.key(["escape", "q", "C-c"], () => process.exit(0));
 
     return this;
   }
 
-  // cria os quadrados primeiro
   setLayoutComponent() {
     this.#layout = blessed.layout({
-      parent: this.screen,
+      parent: this.#screen,
       width: "100%",
       height: "100%",
     });
@@ -51,7 +46,6 @@ export default class ComponentBuilder {
     return this;
   }
 
-  // pra pegar o text area, pegar nosso texto no terminal
   setInputComponent(onEnterPressed) {
     const input = blessed.textarea({
       parent: this.#screen,
@@ -81,19 +75,43 @@ export default class ComponentBuilder {
       align: "left",
       width: "50%",
       height: "90%",
-      items: ["{bold}Menssenger{/}"],
+      items: ["{bold}Messenger{/}"],
     });
 
     return this;
   }
+  setStatusComponent() {
+    this.#status = blessed.list({
+      ...this.#baseComponent(),
+      parent: this.#layout,
+      width: "25%",
+      height: "90%",
+      items: ["{bold}Users on Room{/}"],
+    });
+    return this;
+  }
 
-  // responsavel por entregar uma factory, nosso objeto que precisamos para a tela
+  setActivityLogComponent() {
+    this.#activityLog = blessed.list({
+      ...this.#baseComponent(),
+      parent: this.#layout,
+      width: "25%",
+      height: "90%",
+      style: {
+        fg: "yellow",
+      },
+      items: ["{bold}Activity Log{/}"],
+    });
+    return this;
+  }
+
   build() {
     const components = {
-      // deixando publico somente essas variaveis
       screen: this.#screen,
       input: this.#input,
       chat: this.#chat,
+      activityLog: this.#activityLog,
+      status: this.#status,
     };
 
     return components;
