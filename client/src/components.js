@@ -93,6 +93,7 @@ export default class ComponentBuilder {
       // deixando publico somente essas variaveis
       screen: this.#screen,
       input: this.#input,
+      chat: this.#chat,
     };
 
     return components;
